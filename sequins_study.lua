@@ -5,7 +5,7 @@ function init()
     ii.disting.algorithm(21)
 end
 
-seq2 = sequins.new{'-' , ' ', ' ' , '/', '|' , '.' , '-' , '/' , '+', ' ', ' ', '|', ' ', '.', '/'}
+seq2 = sequins.new{'-' , ' ', ' ' , '+', ' ', '-', '/', '|' , '.' , '-' , '/' , '+', ' ', ' ', '|', ' ', '.', '/'}
 seq = sequins.new{'+' , ' ' , seq2 ,  '.' , '+' , '|' , '-'} -- A simple major scale pattern (in semitones)
 static_seq = sequins.new{2.5, 3.0, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages
 
@@ -13,14 +13,12 @@ static_seq = sequins.new{2.5, 3.0, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- S
 function make_sound(char)
     if     char == '+' then 
         ii.jf.trigger( 6, 1 )
-        ii.disting.voice_on( 1, 100 )
         ii.disting.parameter( 7 , 6 )
     elseif char == '|' then 
         ii.jf.trigger( 4, 1 )
-        ii.disting.parameter( 7, 7 )
     elseif char == '.' then 
+        ii.disting.voice_off( 1, 100 )
         ii.jf.trigger( 3, 1 )
-        ii.disting.parameter( 7, 3 )
     elseif char == '/' then 
         static_value = static_seq()
         output[1].volts = static_seq()
