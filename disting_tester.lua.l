@@ -1,5 +1,6 @@
---- sequins play
--- fuckin about
+
+--- disting ex tester
+-- test this shit out
 
 function init()
     ii.disting.algorithm(21)
@@ -12,23 +13,15 @@ static_seq = sequins.new{2.5, 3.0, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- S
 
 function make_sound(char)
     if     char == '+' then 
-        ii.jf.trigger( 6, 1 )
         ii.disting.parameter( 7 , 6 )
+        ii.disting.voice_on( 1, 100)
     elseif char == '|' then 
-        ii.jf.trigger( 4, 1 )
+        ii.disting.parameter( 7 , 2 )
     elseif char == '.' then 
-        ii.disting.voice_off( 1, 100 )
-        ii.jf.trigger( 3, 1 )
+        ii.disting.voice_off( 1, 0 )
     elseif char == '/' then 
         static_value = static_seq()
         output[1].volts = static_seq()
-        ii.disting.voice_on( 1, 100 )
-    elseif char == '-' then 
-        if static_seq:peek() then
-            local static_value = static_seq()  -- Get a static voltage from the sequence
-            ii.er301.cv(2, static_value)       -- Send static voltage to ER-301 on channel 2
-            ii.er301.tr_pulse(2, 1)              -- Trigger pulse
-        end
     end -- note that spaces are ignored!
   end
 
@@ -39,7 +32,6 @@ m = metro.init()
 m.event = function()
     local char = seq()  -- Step through the sequence
     make_sound(char)    -- Call the function to trigger sound
-    print("char:", char, "static voltage:", static_value) -- Debug output
 end
 
 -- Set metro parameters and start
