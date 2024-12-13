@@ -19,7 +19,7 @@ function make_sound(char)
         ii.disting.parameter( 7 , 2 )
     elseif char == '.' then 
         ii.disting.voice_off( 1, 0 )
-    elseif char == '/' then 
+    elseif char == '/' then
         static_value = static_seq()
         output[1].volts = static_seq()
     end -- note that spaces are ignored!
