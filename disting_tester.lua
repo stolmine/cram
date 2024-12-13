@@ -2,49 +2,67 @@
 -- test this shit out
 
 function init()
-    ii.disting.algorithm(21)     -- Set algorithm to Macro Oscillator 2
-    ii.disting.note_pitch(1, 60)   -- Trigger voice 1 with MIDI pitch 60 (Middle C)
-    print("Sent voice_on command: Voice 1, Pitch 60")
+    ii.disting.algorithm(3)     -- Set algorithm to Macro Oscillator 2
+    print("Algorithm set to SD multisample")
+    ii.disting.parameter(7, 51)
+    print("Folder set to soft piano")
+    -- ii.er301.cv_slew(3, 600)
 end
 
--- function init()
---     ii.disting.algorithm(21)
--- end
+ seq = sequins.new{'+' , '-' , '/' , '+' , '+' , seq2 , ';', '-', '.'}
+ seq2 = sequins.new{'-' ,'' , '.' , '+' , '' , '+' , '+' , '/', ';'}
+ ERseq = sequins.new{'&' , '&' , '&' , '&' , '&' , ERseqnest , '&' , '^' , '&' , '*' , '&'}
+ ERseqnest = sequins.new{'^' , '&' , '*' , '&' , '&' , '^'}
+ static_seq = sequins.new{2.5, 3.0, 0, -2.56, 1.56, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages
 
--- seq2 = sequins.new{'-' , ' ', ' ' , '+', ' ', '-', '/', '|' , '.' , '-' , '/' , '+', ' ', ' ', '|', ' ', '.', '/'}
--- seq = sequins.new{'+' , ' ' , seq2 , '-', ' ',  '.' , '+' , '|' , '-'} -- A simple major scale pattern (in semitones)
--- static_seq = sequins.new{2.5, 3.0, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages
+function make_sound(char)
+    if char == '+' then 
+        ii.disting.voice_pitch(1, 3.58333)
+        print("Disting: Sent voice_pitch(1, -10000)")
+        ii.disting.voice_on(1, 12000)
+        print("Disting: Sent voice_on(1, 32767)")
+    elseif char == '-' then
+        ii.disting.voice_pitch(2, 2.33333)
+        ii.disting.voice_on(2, 12000)
+    elseif char == '/' then
+        ii.disting.voice_pitch(3, 1.91667)
+        ii.disting.voice_on(3, 12000)
+    elseif char == ';' then
+        ii.disting.voice_pitch(4, 2.75)
+        ii.disting.voice_on(3, 12000)
+    end
+end
 
+function ERtrig(char)
+    if char == '&' then 
+        if static_seq:peek() then
+            local static_value = static_seq()  -- Get a static voltage from the sequence
+            ii.er301.cv(2, static_value)       -- Send static voltage to ER-301 on channel 2
+            ii.er301.tr_pulse(2, 1)             -- Trigger pulse
+        end             
+    elseif char == '^' then
+        ii.er301.cv_slew(3, 0)
+        ii.er301.cv(3, 0)
+    elseif char == '*' then
+        ii.er301.cv_slew(3, 150)
+        ii.er301.cv(3, -5)
+    end
+end
 
--- function make_sound(char)
---     if     char == '+' then 
---         ii.disting.parameter( 7 , 6 )
---         ii.disting.voice_on( 1, 16000)
---         print("Disting: Voice On (nil), Param 7 = 6")
---     elseif char == '|' then 
---         ii.disting.parameter( 7 , 2 )
---         print("Disting: Param 7 = 2")
---     elseif char == '.' then 
---         ii.disting.voice_off( 1 )
---         print("Disting: Voice off")
---     elseif char == '/' then
---         static_value = static_seq()
---         output[1].volts = static_seq()
---     end -- note that spaces are ignored!
---   end
+-- Define the metro
+m = metro.init()
 
--- -- Define the metro
--- m = metro.init()
+-- Configure the metro's event
+m.event = function()
+    local char = seq()  -- Step through the sequence
+    make_sound(char)    -- Call the function to trigger sound
+    local char = ERseq()
+    ERtrig(char)
+    print("char:", char) -- Debug output
+end
 
--- -- Configure the metro's event
--- m.event = function()
---     local char = seq()  -- Step through the sequence
---     make_sound(char)    -- Call the function to trigger sound
---     print("char:", char, "static voltage:", static_value) -- Debug output
--- end
-
--- -- Set metro parameters and start
--- m.time = 0.025 -- Set the interval (0.5 seconds here)
--- m.count = -1   -- Infinite repeats
--- m:start()      -- Start the metro
--- m:stop()       -- and stop it
+-- Set metro parameters and start
+m.time = 0.15 -- Set the interval (0.5 seconds here)
+m.count = -1   -- Infinite repeats
+m:start()      -- Start the metro
+m:stop()       -- and stop it
