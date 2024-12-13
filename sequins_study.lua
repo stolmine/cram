@@ -29,3 +29,4 @@ end
 m.time = 0.025                          -- Set the interval (0.5 seconds here)
 m.count = -1                          -- Infinite repeats
 m:start()                             -- Start the metro
+m:stop() -- and stop it
