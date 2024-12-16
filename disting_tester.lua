@@ -9,27 +9,38 @@ function init()
     -- ii.er301.cv_slew(3, 600)
 end
 
- seq = sequins.new{'+' , '-' , '/' , '+' , '+' , seq2 , ';', '-', '.'}
+ seq = sequins.new{'+' , '-' , ' ' , ';' , ' ' , '/' , '#' , ' ' , '+' , ']' , '+' , ';' , '-', '/' , '-' , '#'}
  seq2 = sequins.new{'-' ,'' , '.' , '+' , '' , '+' , '+' , '/', ';'}
- ERseq = sequins.new{'&' , '&' , '&' , '&' , '&' , ERseqnest , '&' , '^' , '&' , '*' , '&'}
+
+ ERseq = sequins.new{'&' , '&' , ERseqnest , '&' , '&' , '&' , '&' , '^' , '&' , '*' , '&' }
  ERseqnest = sequins.new{'^' , '&' , '*' , '&' , '&' , '^'}
- static_seq = sequins.new{2.5, 3.0, 0, -2.56, 1.56, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages
+ static_seq = sequins.new{2.5, 3.0, 0, -3, 1.89, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages
 
 function make_sound(char)
     if char == '+' then 
         ii.disting.voice_pitch(1, 3.58333)
         print("Disting: Sent voice_pitch(1, -10000)")
-        ii.disting.voice_on(1, 12000)
+        ii.disting.voice_on(1, 15000)
         print("Disting: Sent voice_on(1, 32767)")
     elseif char == '-' then
         ii.disting.voice_pitch(2, 2.33333)
-        ii.disting.voice_on(2, 12000)
+        ii.disting.voice_on(2, 20000)
     elseif char == '/' then
         ii.disting.voice_pitch(3, 1.91667)
-        ii.disting.voice_on(3, 12000)
+        ii.disting.voice_on(3, 9500)
     elseif char == ';' then
         ii.disting.voice_pitch(4, 2.75)
-        ii.disting.voice_on(3, 12000)
+        ii.disting.voice_on(3, 17000)
+    elseif char == ']' then
+        ii.disting.voice_pitch(5, 0.33333)
+        ii.disting.voice_on(5, 21000)
+        ii.disting.voice_pitch(6, 1.5)
+        ii.disting.voice_on(6, 14000)
+    elseif char == '#' then
+        ii.disting.voice_pitch(7, 1.75)
+        ii.disting.voice_on(7, 24000)
+        ii.disting.voice_pitch(8, 3.5)
+        ii.disting.voice_on(8, 15000)
     end
 end
 
