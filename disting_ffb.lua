@@ -1,26 +1,27 @@
 --- sequencing the filter bank on DEX
 -- do your thing chat
+-- call param_mappings = generate_param_mappings() in druid to randomize filterbank param sequence
+-- call 
 
 function init()
-    --do something
     dex = ii.disting
     od = ii.er301
-    p = pameter
-    dex.algorithm(9)
-    dex.parameter(7,1)
+    dex.parameter(8, 50) -- set resonance at default
+    dex.parameter(9, -40) -- set dry gain to negative infinity
+    dex.parameter(10, -10) -- set wet gain to -10db
+    dex.parameter(7, 1) -- set filter mode to BPF
+
+    -- Generate parameter mappings dynamically, call this in repl to do it live!
+    param_mappings = generate_param_mappings()
+
+    -- Debug: Print generated mappings (optional)
+    for char, params in pairs(param_mappings) do
+        print("Character:", char)
+        for param, value in pairs(params) do
+            print("Param:", param, "Value:", value)
+        end
+    end
 end
-
--- attempting to generate a group of strings to pass to my sequins
-
--- function populate_sequins(chars, count)
---     local seq_table = {}
---     for i = 1, count do
---         -- add a random character from the given group, enclosed in single quotes
---         local char = "'" .. chars[math.random(#chars)] .. "'"
---         table.insert(seq_table, char)
---     end
---     return sequins.new(seq_table)
--- end
 
 function populate_sequins(chars, count)
     local seq_table = {}
@@ -37,111 +38,37 @@ end
 local chars = {'+', '-', '/', '^'}
 local seq_length = 19
 
--- Define the parameter mappings
-local param_mappings = {
-    ['+'] = {
-        [8] = math.random(35, 89),
-        [13] = math.random(10, 115),
-        [14] = math.random(10, 115),
-        [15] = math.random(10, 115),
-        [16] = math.random(10, 115),
-        [17] = math.random(10, 115),
-        [18] = math.random(10, 115),
-        [19] = math.random(10, 115),
-        [20] = math.random(10, 115),
-        [29] = math.random(-40, 0),
-        [30] = math.random(-40, 0),
-        [31] = math.random(-40, 0),
-        [32] = math.random(-40, 0),
-        [33] = math.random(-40, 0),
-        [34] = math.random(-40, 0),
-        [35] = math.random(-40, 0),
-        [36] = math.random(-40, 0)
-    },
-    ['-'] = {
-        [8] = math.random(35, 89),
-        [13] = math.random(10, 115),
-        [14] = math.random(10, 115),
-        [15] = math.random(10, 115),
-        [16] = math.random(10, 115),
-        [17] = math.random(10, 115),
-        [18] = math.random(10, 115),
-        [19] = math.random(10, 115),
-        [20] = math.random(10, 115),
-        [29] = math.random(-40, 0),
-        [30] = math.random(-40, 0),
-        [31] = math.random(-40, 0),
-        [32] = math.random(-40, 0),
-        [33] = math.random(-40, 0),
-        [34] = math.random(-40, 0),
-        [35] = math.random(-40, 0),
-        [36] = math.random(-40, 0)
-    },
-    ['/'] = {
-        [8] = math.random(35, 89),
-        [13] = math.random(10, 115),
-        [14] = math.random(10, 115),
-        [15] = math.random(10, 115),
-        [16] = math.random(10, 115),
-        [17] = math.random(10, 115),
-        [18] = math.random(10, 115),
-        [19] = math.random(10, 115),
-        [20] = math.random(10, 115),
-        [29] = math.random(-40, 0),
-        [30] = math.random(-40, 0),
-        [31] = math.random(-40, 0),
-        [32] = math.random(-40, 0),
-        [33] = math.random(-40, 0),
-        [34] = math.random(-40, 0),
-        [35] = math.random(-40, 0),
-        [36] = math.random(-40, 0)
-    },
-    ['^'] = {
-        [8] = math.random(35, 89),
-        [13] = math.random(10, 115),
-        [14] = math.random(10, 115),
-        [15] = math.random(10, 115),
-        [16] = math.random(10, 115),
-        [17] = math.random(10, 115),
-        [18] = math.random(10, 115),
-        [19] = math.random(10, 115),
-        [20] = math.random(10, 115),
-        [29] = math.random(-40, 0),
-        [30] = math.random(-40, 0),
-        [31] = math.random(-40, 0),
-        [32] = math.random(-40, 0),
-        [33] = math.random(-40, 0),
-        [34] = math.random(-40, 0),
-        [35] = math.random(-40, 0),
-        [36] = math.random(-40, 0)
-    }
-}
+function generate_param_mappings()
+    local chars = {'+', '-', '/', '^'}
+    local param_mappings = {}
 
+    for _, char in ipairs(chars) do
+        param_mappings[char] = {}
+        for i = 8, 8 do
+            param_mappings[char][i] = math.random(5, 50)
+        end
+        for i = 13, 20 do
+            param_mappings[char][i] = math.random(10, 115)
+        end
+        for i = 29, 36 do
+            param_mappings[char][i] = math.random(-40, -12)
+        end
+    end
 
--- function for assigning values to our chars
-
--- function handle_parameters(char, param_table)
---     if param_table[char] then
---         for param, value in pairs(param_table[char]) do
---             dex.p(param, value)
---         end
---     else
---         print("No parameters defined for:", char)
---     end
--- end
+    return param_mappings
+end
 
 function handle_parameters(char)
-    local mappings = param_mappings[char]
-    if mappings then
-        for param, value in pairs(mappings) do
-            dex.parameter(param, value)
+    if param_mappings[char] then
+        for param, value in pairs(param_mappings[char]) do
+            ii.disting.parameter(param, value)
         end
     else
         print("No parameter mapping found for:", char)
     end
 end
 
--- creat a new sequins programmatically
+-- create a new sequins programmatically
 
 seq = populate_sequins(chars, seq_length)
 
