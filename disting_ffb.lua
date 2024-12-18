@@ -36,11 +36,11 @@ end
 
 -- example usage
 
-local chars = {'+', '-', '/', '^'}
+local chars = {'+', '-', '/', '^', '&', '$', '#'}
 local seq_length = 19
 
 function generate_param_mappings()
-    local chars = {'+', '-', '/', '^'}
+    local chars = {'+', '-', '/', '^', '&', '$', '#'}
     local param_mappings = {}
 
     for _, char in ipairs(chars) do
