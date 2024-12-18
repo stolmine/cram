@@ -1,7 +1,8 @@
 --- sequencing the filter bank on DEX
 -- do your thing chat
 -- call param_mappings = generate_param_mappings() in druid to randomize filterbank param sequence
--- call 
+-- call start() and stop() to run the sequence
+-- todo: add trigger input for randomization and cv control over filter type
 
 function init()
     dex = ii.disting
