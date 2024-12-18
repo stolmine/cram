@@ -12,6 +12,8 @@ function init()
     dex.parameter(10, -10) -- set wet gain to -10db
     dex.parameter(7, 1) -- set filter mode to BPF
 
+    output[1].action = pulse() -- set output[1] to act as a generic pulse, we call this later via output[1]()
+
     -- Generate parameter mappings dynamically, call this in repl to do it live!
     param_mappings = generate_param_mappings()
 
@@ -96,6 +98,7 @@ m = metro.init()
         local char = seq()
         print("Processing char:", char)
         handle_parameters(char) -- call the param handling function
+        output[1]()
     end
 
     m.time = 0.15
