@@ -7,6 +7,7 @@
 function init()
     dex = ii.disting
     od = ii.er301
+    dex.algorithm(9)
     dex.parameter(8, 50) -- set resonance at default
     dex.parameter(9, -40) -- set dry gain to negative infinity
     dex.parameter(10, -10) -- set wet gain to -10db
