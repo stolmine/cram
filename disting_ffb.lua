@@ -13,6 +13,12 @@ function init()
     dex.parameter(10, -10) -- set wet gain to -10db
     dex.parameter(7, 1) -- set filter mode to BPF
 
+    local num = 21 -- set all gate params to 1 wo we actually process audio when the script loads
+    while num <= 28 do
+        dex.parameter(num, 1)
+        num = num + 1
+    end
+
     output[1].action = pulse() -- set output[1] to act as a generic pulse, we call this later via output[1]()
 
     -- Generate parameter mappings dynamically, call this in repl to do it live!
