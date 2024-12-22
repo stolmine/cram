@@ -85,53 +85,19 @@ function generate_param_mappings()
     return param_mappings
 end
 
+function send_gates(char) -- trying to send gates to txo, works manually but not when calling as function inside metro
+    if char == '+' then
+        txo.tr_pulse(1)
+    elseif char == '-' then
+        txo.tr_pulse(2)
+    elseif char == '/' then
+        txo.tr_pulse(3)
+    end
+end
+
 function handle_parameters(char)
     if param_mappings[char] then
         for param, value in pairs(param_mappings[char]) do
-            ii.disting.parameter(param, value)
-        end
-    else
-        print("No parameter mapping found for:", char)
-    end
-end
-
-function send_gates(char)
-    print("send_gates received:", char, "Type:", type(char))
-    print("--------------------------------------------")
-    
-    -- Remove any unwanted whitespace or formatting issues
-    char = char:gsub("%s", "")
-    
-    -- Match the character and trigger gates
-    if char == '+' then
-        print("Sending pulse to TXo output 1")
-        txo.tr_pulse(1)
-    elseif char == '$' then
-        print("Sending pulse to TXo output 2")
-        txo.tr_pulse(2)
-    elseif char == '/' then
-        print("Sending pulse to TXo output 3")
-        txo.tr_pulse(3)
-    elseif char == '-' then
-        print("char undefined:", char)
-    elseif char == '^' then
-        print("char undefined:", char)
-    elseif char == '&' then
-        print("char undefined:", char)
-    elseif char == '#' then
-        print("char undefined:", char)
-    else
-        print("No matching gate condition for char:", char)
-    end
-    print("--------------------------------------------")
-end
-
-
--- Function to handle parameters
-function handle_parameters(char)
-    local mappings = param_mappings[char]
-    if mappings then
-        for param, value in pairs(mappings) do
             ii.disting.parameter(param, value)
         end
     else
@@ -143,44 +109,58 @@ end
 
 m = metro.init()
 
-    -- configure metros to call our relevant functions per tick
+    -- main seq
     m.event = function()
-        print("Debug: seq current value:", seq())
         local char = seq()
+        print("Debug: seq current value:", char)
         print("Processing char from seq:", char, "Type:", type(char))
         if char == nil then
             print("Error: char is nil. seq may not be returning valid values.")
             return
         end
         handle_parameters(char)
-        send_gates(char)
         output[1]()
     end
 
-    m.time = 0.15
+    m.time = 0.15 -- og 0.15
     m.count = -1
     m:start()      -- Start the metro
     m:stop()       -- and stop it'
 
 m2 = metro.init()
 
-    -- configure metros to call our relevant functions per tick
+    -- cdouble time hat triggers
     m2.event = function()
         output[2]()
     end
 
-    m2.time = 0.075
+    m2.time = 0.075 -- og 0.075
     m2.count = -1
     m2:start()      -- Start the metro
     m2:stop()       -- and stop it
+
+m3 = metro.init()
+
+    -- gates to txo
+    m3.event = function()
+        local char = seq()
+        send_gates(char)
+    end
+
+    m3.time = 0.45
+    m3.count = -1
+    m3:start()      -- Start the metro
+    m3:stop()       -- and stop it
 
 -- global stop and start functions for our metros
 function start()
     m:start()
     m2:start()
+    m3:start() 
 end
 
 function stop()
     m:stop()
     m2:stop()
+    m3:stop()
 end
