@@ -92,6 +92,8 @@ function send_gates(char) -- trying to send gates to txo, works manually but not
         txo.tr_pulse(2)
     elseif char == '/' then
         txo.tr_pulse(3)
+    elseif char == '$' then
+        txo.tr_pulse(4)
     end
 end
 
