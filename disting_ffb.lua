@@ -26,8 +26,10 @@ function init()
 
     output[1].action = pulse() -- set output[1] to act as a generic pulse, we call this later via output[1]()
     output[2].action = pulse() -- ditto for output[2]
-    output[3].action = pulse() -- and output 3
+    output[3].action = pulse() -- and output 3 -- this is our reset
     output[4].action = pulse()
+
+    output[3]() -- send reset at beginning of track
 
     -- Generate parameter mappings dynamically, call this in repl to do it live!
     param_mappings = generate_param_mappings()
@@ -128,7 +130,7 @@ function od_param(char) -- adding in harmonic elements from the 301
         od.cv_slew(1, 500)
         od.cv(1, 0.58333)
         od.cv(2, 2.5)
-        od.tr_time(1, 500)
+        od.tr_time(1, 1000)
     elseif char == '/' then
         od.cv_slew(1, 0)
         od.cv(1, -0.5)
@@ -139,7 +141,7 @@ function od_param(char) -- adding in harmonic elements from the 301
         od.cv(2, 6)
         od.tr_time(1, 600)
     elseif char == '^' then
-        pd.cv(1, -1)
+        od.cv(1, -1)
         od.cv(2, 0)
     end
 end
