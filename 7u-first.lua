@@ -5,6 +5,7 @@ dex = ii.disting
 od = ii.er301
 txo = ii.txo
 txi = ii.txi
+jf = ii.jf
 
 local chars = {'+' , '-' , '/' , '#' , '@' , '*' , '^' , ';' , ':' , '%' , '$' , '?'}
 local seq_length = 45
@@ -49,15 +50,27 @@ function make_sound(char)
     end
 end
 
-local current_index = 0
+local current_index = 0 -- keeps track of the index of our sequins in the function below
+
+-- trying to add a modulo controlled fill here, the plan is to switch banks momentarily when condition is met
 local counter = 0
-local modulo_value = 12
-local threshold = 12 -- trying to add a modulo controlled fill here, the plan is to switch banks momentarily when condition is met
 
--- function fill()
---     counter = counter + 1
---     while 
 
+
+function update_counter()
+    counter = counter + 1
+    if counter > 46 then
+        txo.cv_n(2, math.random(0,11))
+        print("Fill!")
+    else
+        print("Still counting:", counter)
+        txo.cv_n(2, 5)
+    end
+    if counter == 63 then
+        counter = 0
+        print("counter reset!")
+    end
+end
 
 function seq_freq()
     -- local char = seq_tester() -- step through our sequins defined above
@@ -72,10 +85,14 @@ function seq_freq()
     print("triggering make_sound with input", char, "seq index", current_index)
 end
 
+function wrapper() -- calling two functions with a wrapper here cause lua
+    seq_freq()
+    update_counter()
+end
 
 function init()
     input[1]{ mode = 'change', direction = 'rising' }
-    input[1]. change = seq_freq
+    input[1]. change = wrapper
     txo.tr_time(1, 5)
 end
 
