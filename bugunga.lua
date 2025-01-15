@@ -1,37 +1,88 @@
---- a disting patch for macro osc 2
+--- a 301 sequencer
 -- test this shit out
 
 function init()
-    DEX = ii.disting
     OD = ii.er301
+    txo = ii.txo
+    jf = ii.jf
 end
 
- seq = sequins.new{'+' , '-' , '#' , ';' , ' ' , '/' , '#' , ' ' , '+' , ']' , '+' , ';' , '-', '/' , '-' , '#'}
---  static_seq = sequins.new{2.5, 3.0, 0, -3, 1.89, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages (og record this!)
+local chars = {'+' , '-' , '/' , '#' , '@' , '*' , '^' , ';' , ':' , '%' , '$' , '?'}
+local seq_length = 45
 
-function ERtrig(char)
-    if char == '&' then 
-        if static_seq:peek() then
-            local static_value = static_seq()  -- Get a static voltage from the sequence
-            OD.cv(2, static_value)       -- Send static voltage to ER-301 on channel 2
-            OD.tr_pulse(2, 1)             -- Trigger pulse
-        end             
-    elseif char == '^' then
-        OD.cv_slew(3, 0)
-        OD.cv(3, 0)
-    elseif char == '*' then
-        OD.cv_slew(3, 150)
-        OD.cv(3, -5)
+function populate_sequins(chars, count)
+    local seq_table = {}
+    for i = 1, count do
+        local char = chars[math.random(#chars)]
+        print("Adding char to seq_table:", char) -- Debug print
+        table.insert(seq_table, char)
+    end
+    print("Final seq_table:", table.concat(seq_table, ", ")) -- Debug inside function
+    return sequins.new(seq_table)
+end
+
+-- create a new sequins programmatically
+
+seq = populate_sequins(chars, seq_length)
+
+print("generated sequins:", table.concat(seq, ", "))
+
+print("Debug: Cycling through seq:")
+for i = 1, #chars do
+    print(seq())
+end
+
+-- here we need to produce our function which assigns values to our chars
+
+function make_sound(char)
+    -- Table to store assigned values for characters
+    local char_map = {}
+
+    -- Characters to ignore or assign special behavior
+    local ignored_chars = {
+        ['#'] = true, -- Ignore this character (do nothing)
+        ['%'] = true,
+        ['*'] = 'special', -- Example for special behavior
+    }
+
+    -- Check if the character is ignored
+    if ignored_chars[char] == true then
+        print("Ignoring character:", char)
+        return -- Do nothing
+    end
+
+    -- Handle special behavior
+    if ignored_chars[char] == 'special' then
+        print("Special behavior for character:", char)
+        OD.tr_pulse(3) -- Example: Trigger a different output
+        return
+    end
+
+    -- If the character doesn't already have a value assigned, assign a random float
+    if not char_map[char] then
+        char_map[char] = math.random(-500, 500) / 100 -- Generates a random number between -5 and 5 with two decimal places
+    end
+
+    -- Retrieve the value and proceed
+    local cv_value = char_map[char]
+    if cv_value then
+        print("Sending CV value:", cv_value)
+        OD.tr_pulse(2) -- Trigger TXo output 2
+        OD.cv(2, cv_value) -- Set CV to the mapped value
+    else
+        print("Invalid character:", char)
     end
 end
+
+
 
 -- Define the metro
 m = metro.init()
 
     -- Configure the metro's event
     m.event = function()
-        local char = ERseq()
-        ERtrig(char)
+        local char = seq()
+        make_sound(char)
         print("char:", char) -- Debug output
     end
 
@@ -41,19 +92,11 @@ m = metro.init()
     m:start()      -- Start the metro
     m:stop()       -- and stop it
 
-    -- Set second metro parameters and start
-    m2.time = 0.15 -- Set the interval (0.5 seconds here)
-    m2.count = -1   -- Infinite repeats
-    m2:start()      -- Start the metro
-    m2:stop()       -- and stop it
-
 -- global stop and start functions for our metros
 function start()
     m:start()
-    m2:start()
 end
 
 function stop()
     m:stop()
-    m2:stop()
 end
