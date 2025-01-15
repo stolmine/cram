@@ -1,5 +1,8 @@
 --- a 301 sequencer
 -- test this shit out
+-- todo: add a counter to our metro which moves between sections (functions) 
+-- we'll probably need a bigger case to do much more than we have
+-- though sections could be done by mixing
 
 function init()
     OD = ii.er301
