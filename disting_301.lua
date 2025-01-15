@@ -17,7 +17,6 @@ end
  static_seq = sequins.new{2.5, 3.0, 0, -3, 1.89, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages
 --  static_seq = sequins.new{2.5, 3.0, 0, -3, 1.89, 3.5, 4.0, 4.5, -3, -4.5, 2, -1.35, 2.95} -- Static voltages (og record this!)
 
-
 function make_sound(char)
     if char == '+' then 
         DEX.parameter( 7 , 2 )
