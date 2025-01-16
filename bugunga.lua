@@ -188,7 +188,7 @@ m = metro.init()
     end
 
     -- Set metro parameters and start
-    m.time = 0.125 -- Set the interval (0.5 seconds here)
+    m.time = 0.125 -- Set the interval
     m.count = -1   -- Infinite repeats
     m:start()      -- Start the metro
     m:stop()       -- and stop it
