@@ -13,6 +13,7 @@ function init()
         hat = create_sequence(math.random(45,90)),
         real_hat = create_sequence(math.random(23,104)),
         osc2_pitch = create_sequence(math.random(17,83)),
+        mod_sequence_1 = create_sequence(math.random(20,97)),
     }
 
     steps = {
@@ -21,6 +22,7 @@ function init()
         hat = 1,
         real_hat = 1,
         osc2_pitch = 1,
+        mod_sequence_1 = 1,
     }
 
     -- TXo configurations
@@ -30,7 +32,13 @@ function init()
     txo.env_att(1, 0)
     txo.env_dec(1, 30)
     txo.cv(1, 5)
+
+    -- debug sequence generation
+    print("mod_sequence_1:", table.concat(sequences["mod_sequence_1"], ", "))
+
 end
+
+dex.load_preset(7)
 
 local beat_chars = {1, 0}
 
@@ -95,6 +103,15 @@ function osc2_pitch_action(value)
     end
 end
 
+function mod_1_action(value)
+    if value == 1 then
+        txo.cv(4, math.random(0,500))
+        print("sending mod to txo")
+    else
+        --do nothing
+    end
+end
+
 -- Metro setup
 m = metro.init()
 
@@ -104,6 +121,8 @@ m.event = function()
     step_sequence("hat", hat_action)
     step_sequence("real_hat", real_hat_action)
     step_sequence("osc2_pitch", osc2_pitch_action)
+    print("calling mod sequence 1 in metro")
+    step_sequence("mod_sequence_1", mod_1_action)
 end
 
 m.time = 0.125
