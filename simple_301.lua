@@ -11,7 +11,7 @@ function process_trigger()
     local inverted_voltage = -sampled_voltage -- Invert voltage
     local random_step = math.random() * 10 - 5 -- Generate stepped random voltage (-5 to +5)
     local random_slew = math.random() * 10 - 5 -- Generate new random voltage for slewing
-    local slew_time = math.random() * 0.5 + 0.1 -- Randomize slew time per trigger
+    local slew_time = math.random() * 6 -- Randomize slew time between 0 and 6 seconds
     
     print("Trigger received!")
     print("Sampled Voltage (Input 2):", sampled_voltage)
