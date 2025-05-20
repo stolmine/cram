@@ -16,7 +16,7 @@ function quant(num)
 end
 
 local chars = {'+' , '-' , '*' , '&' , '^' , '%' , '$' , '#'}
-local seq_length = 16
+local seq_length = 21
 local char_map = {}
 
 function setup_char_map()
@@ -61,8 +61,10 @@ function make_sound(char)
         return
     elseif mapped == "trigger" then
         jf.trigger(1, 1)
+        txo.cv(1,2.5)
     elseif type(mapped) == "table" then
         jf.play_note(mapped.note, mapped.velocity)
+        txo.cv(1,0)
     end
 end
 
